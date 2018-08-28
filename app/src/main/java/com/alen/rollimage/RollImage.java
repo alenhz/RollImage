@@ -18,16 +18,24 @@ import android.view.ViewTreeObserver;
 
 public class RollImage extends AppCompatImageView {
 
-    private View parentView;
+    private View parentView;//本view的父元素
     private int parentHight, move;
     private int mMinDx;//image控件的当前高度
     private int windowY = 0;
-    private int[] location = new int[2], parentLocation = new int[2];
-    private int w, h;
-    private Drawable drawable;
+    private int[] location = new int[2], parentLocation = new int[2];//控件,和父元素相对于屏幕左上角的坐标
+    private int w, h;//图片按比例适应控件大小后的宽高
+    private Drawable drawable;//图片资源
+
+    public RollImage(Context context) {
+        this(context, null);
+    }
 
     public RollImage(Context context, @Nullable AttributeSet attrs) {
-        super(context, attrs);
+        this(context, attrs, 0);
+    }
+
+    public RollImage(Context context, AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
         //每当view滚动均执行isInvalidate();方法
         getViewTreeObserver().addOnScrollChangedListener(new ViewTreeObserver.OnScrollChangedListener() {
             @Override
@@ -36,6 +44,8 @@ public class RollImage extends AppCompatImageView {
             }
         });
     }
+
+
 
     private void isInvalidate(){
         //获取父控件
@@ -53,7 +63,6 @@ public class RollImage extends AppCompatImageView {
             windowY = location[1];
             w = getWidth();
             h = (int) (getWidth() * 1.0f / drawable.getIntrinsicWidth() * drawable.getIntrinsicHeight());//等比例设置图片高度
-            //将图片绘制在canvas的(x,y,w,h)的矩形范围内
 
             //move = (父布局的高度+父布局到屏幕顶端的距离-控件距离顶端的距离-控件自身的高度)*(图片高度-控件高度)/(父元素高度-控件高度)
             move = (int)((parentHight + parentLocation[1] - windowY - mMinDx)*1.0f*(h-mMinDx)/(parentHight -mMinDx));
